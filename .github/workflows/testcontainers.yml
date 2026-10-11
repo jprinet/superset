@@ -106,6 +106,7 @@ jobs:
         include: ${{ fromJson(needs.compute-matrix.outputs.include) }}
     timeout-minutes: ${{ matrix.timeout }}
     env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
       PYTHONPATH: ${{ github.workspace }}
       SUPERSET_TESTENV: true
       SUPERSET_SECRET_KEY: not-a-secret
