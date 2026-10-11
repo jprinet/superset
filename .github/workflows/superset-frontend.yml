@@ -15,6 +15,10 @@ concurrency:
 
 env:
   TAG: apache/superset:GHA-${{ github.run_id }}
+  DEVELOCITY_DOCKER_ENV: >-
+    -e NODE_OPTIONS=--require=@gradle-tech/develocity-agent/preload
+    -e DEVELOCITY_ACCESS_KEY -e GITHUB_ACTIONS -e GITHUB_WORKFLOW -e GITHUB_JOB
+    -e GITHUB_RUN_ID -e GITHUB_RUN_ATTEMPT -e GITHUB_RUN_NUMBER -e GITHUB_HEAD_REF
 
 permissions:
   contents: read
@@ -82,6 +86,8 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-26.04
     timeout-minutes: 20
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: Download Docker Image Artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -96,6 +102,7 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/superset-frontend/coverage
           docker run \
+          $DEVELOCITY_DOCKER_ENV \
           -v ${{ github.workspace }}/superset-frontend/coverage:/app/superset-frontend/coverage \
           -e CI=true \
           --rm $TAG \
@@ -143,6 +150,8 @@ jobs:
     if: needs.frontend-build.outputs.should-run == 'true'
     runs-on: ubuntu-26.04
     timeout-minutes: 20
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: Download Docker Image Artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -155,12 +164,12 @@ jobs:
 
       - name: lint
         run: |
-          docker run --rm $TAG bash -c \
+          docker run --rm $DEVELOCITY_DOCKER_ENV $TAG bash -c \
           "npm i && npm run lint"
 
       - name: tsc
         run: |
-          docker run --rm $TAG bash -c \
+          docker run --rm $DEVELOCITY_DOCKER_ENV $TAG bash -c \
           "npm i && npm run plugins:build && npm run type"
 
   validate-frontend:
@@ -168,6 +177,8 @@ jobs:
     if: needs.frontend-build.outputs.should-run == 'true'
     runs-on: ubuntu-26.04
     timeout-minutes: 20
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: Download Docker Image Artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -180,7 +191,7 @@ jobs:
 
       - name: Validate dependency tree
         run: |
-          docker run --rm $TAG bash -c \
+          docker run --rm $DEVELOCITY_DOCKER_ENV $TAG bash -c \
           "npm ls --all --package-lock-only --depth=0 --json > /dev/null"
 
   test-storybook:
@@ -188,6 +199,8 @@ jobs:
     if: needs.frontend-build.outputs.should-run == 'true'
     runs-on: ubuntu-26.04
     timeout-minutes: 25
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: Download Docker Image Artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -200,7 +213,7 @@ jobs:
 
       - name: Build Storybook and Run Tests
         run: |
-          docker run --rm $TAG bash -c \
+          docker run --rm $DEVELOCITY_DOCKER_ENV $TAG bash -c \
           "npm run build-storybook && npx playwright install-deps && npx playwright install chromium && npm run test-storybook:ci"
 
   actions-timeline:
@@ -225,6 +238,8 @@ jobs:
     if: needs.frontend-build.outputs.should-run == 'true' && github.event_name == 'pull_request'
     runs-on: ubuntu-26.04
     timeout-minutes: 15
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     permissions:
       contents: read
       pull-requests: write
@@ -277,6 +292,7 @@ jobs:
           mkdir -p ${{ github.workspace }}/superset-frontend/bundle-stats
           mkdir -p ${{ github.workspace }}/superset-frontend/.temp_cache
           docker run \
+          $DEVELOCITY_DOCKER_ENV \
           -v ${{ github.workspace }}/superset-frontend/bundle-stats:/app/superset-frontend/bundle-stats \
           -v ${{ github.workspace }}/superset-frontend/.temp_cache:/app/superset-frontend/.temp_cache \
           --rm $TAG \
