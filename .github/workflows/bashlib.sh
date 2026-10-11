@@ -64,8 +64,17 @@ build-embedded-sdk() {
   say "::endgroup::"
 }
 
+# Preload the Develocity npm agent for the Node processes started from the current directory.
+# Only once the agent is installed there and an access key is available to publish with.
+develocity-npm-preload() {
+  if [[ -n "${DEVELOCITY_ACCESS_KEY:-}" && -d node_modules/@gradle-tech/develocity-agent ]]; then
+    export NODE_OPTIONS="${NODE_OPTIONS:+$NODE_OPTIONS }--require=@gradle-tech/develocity-agent/preload"
+  fi
+}
+
 build-instrumented-assets() {
   cd "$GITHUB_WORKSPACE/superset-frontend"
+  develocity-npm-preload
 
   say "::group::Build static assets with JS instrumented for test coverage"
   cache-restore instrumented-assets
@@ -163,6 +172,7 @@ celery-worker() {
 
 playwright-install() {
   cd "$GITHUB_WORKSPACE/superset-frontend"
+  develocity-npm-preload
 
   say "::group::Install Playwright browsers"
   npx playwright install --with-deps chromium
@@ -261,6 +271,7 @@ playwright-run() {
 
   # Change to frontend directory for Playwright execution
   cd "$GITHUB_WORKSPACE/superset-frontend"
+  develocity-npm-preload
 
   say "::group::Run Playwright tests"
   echo "Running Playwright with baseURL: ${PLAYWRIGHT_BASE_URL}"
