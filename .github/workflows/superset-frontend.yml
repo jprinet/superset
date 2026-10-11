@@ -18,7 +18,7 @@ env:
   DEVELOCITY_DOCKER_ENV: >-
     -e NODE_OPTIONS=--require=@gradle-tech/develocity-agent/preload
     -e DEVELOCITY_ACCESS_KEY -e GITHUB_ACTIONS -e GITHUB_WORKFLOW -e GITHUB_JOB
-    -e GITHUB_RUN_ID -e GITHUB_RUN_ATTEMPT -e GITHUB_RUN_NUMBER -e GITHUB_HEAD_REF
+    -e GITHUB_RUN_ID -e GITHUB_RUN_ATTEMPT -e GITHUB_RUN_NUMBER -e GITHUB_HEAD_REF -e GITHUB_SHA
 
 permissions:
   contents: read
@@ -68,6 +68,7 @@ jobs:
           git show -s --format=raw HEAD
           docker buildx build \
             -t $TAG \
+            --build-arg DEVELOCITY_VALUE_CI_commit_sha="$GITHUB_SHA" \
             --cache-from=type=registry,ref=apache/superset-cache:3.11-slim-trixie \
             --target superset-node-ci \
             .

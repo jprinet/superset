@@ -68,6 +68,9 @@ function buildScanUserData() {
 
   if (process.env.GITHUB_ACTIONS) {
     values['CI provider'] = 'GitHub Actions';
+    if (process.env.GITHUB_SHA !== undefined) {
+      values['CI_commit_sha'] = process.env.GITHUB_SHA;
+    }
     if (process.env.GITHUB_WORKFLOW !== undefined) {
       values['CI workflow'] = process.env.GITHUB_WORKFLOW;
     }

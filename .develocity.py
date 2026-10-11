@@ -21,5 +21,10 @@ from typing import Any
 def develocity_configuration(configuration: Any) -> Any:
     configuration.develocity_url = "https://ge.solutions-team.gradle.com"
     configuration.project_name = "superset"
-    configuration.tags.add("CI" if "GITHUB_ACTIONS" in os.environ else "Local")
+    if "GITHUB_ACTIONS" in os.environ:
+        configuration.tags.add("CI")
+        configuration.custom_values["CI_commit_sha"] = os.environ.get("GITHUB_SHA", "")
+        configuration.custom_values["CI run"] = os.environ.get("GITHUB_RUN_ID", "")
+    else:
+        configuration.tags.add("Local")
     return configuration

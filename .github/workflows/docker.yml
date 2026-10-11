@@ -411,6 +411,7 @@ jobs:
           # only runs when the change detector flags docker/python/frontend
           # changes and the PR build matrix never includes py311/py312.
           EXTRA_FLAGS="$(scripts/docker-build-extra-flags.sh "$BUILD_PRESET" "$IMAGE_TAG")"
+          EXTRA_FLAGS="$EXTRA_FLAGS --build-arg DEVELOCITY_VALUE_CI_commit_sha=$GITHUB_SHA"
 
           for attempt in 1 2 3; do
             # Supersetbot adds --cache-to whenever DOCKERHUB_TOKEN is present.
