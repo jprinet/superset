@@ -78,3 +78,10 @@ runs:
           uv pip install --system -e .
         fi
       shell: bash
+    - name: Install Develocity Python agent
+      if: inputs.install-superset == 'true'
+      shell: bash
+      run: |
+        uv pip install --system \
+          "develocity-agent @ https://develocity-python-pkgs.gradle.com/develocity_agent-0.10.1-py3-none-any.whl#sha256=2bfc48f29b1c437daac718bb3d5c726b74ec60cf33723986341d9a262e6f4896" \
+          || echo "::warning::Could not install the Develocity Python agent; Build Scans will not be published"
