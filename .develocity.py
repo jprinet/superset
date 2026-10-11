@@ -19,6 +19,6 @@ from typing import Any
 
 
 def develocity_configuration(configuration: Any) -> Any:
-    configuration.develocity_url = "https://develocity.apache.org"
+    configuration.develocity_url = "https://ge.solutions-team.gradle.com"
     configuration.tags.add("CI" if "GITHUB_ACTIONS" in os.environ else "Local")
     return configuration

@@ -1,5 +1,5 @@
 name: "Start Develocity Docker agent"
-description: "Starts the Develocity Docker agent in the background so that Docker image builds publish Build Scans to develocity.apache.org"
+description: "Starts the Develocity Docker agent in the background so that Docker image builds publish Build Scans to ge.solutions-team.gradle.com"
 runs:
   using: "composite"
   steps:
@@ -12,7 +12,7 @@ runs:
     - name: Start Develocity Docker agent
       shell: bash
       env:
-        DEVELOCITY_URL: https://develocity.apache.org
+        DEVELOCITY_URL: https://ge.solutions-team.gradle.com
         AGENT_VERSION: 0.9.0
         AGENT_SHA256: 16943826bc7a03d76104e962e02d72880391e06b0fcd5bff43e76ba51b9d5ec3
       run: |

@@ -21,7 +21,7 @@ const { execSync } = require('node:child_process');
 const develocityUrl =
   process.env.DEVELOCITY_URL !== undefined
     ? process.env.DEVELOCITY_URL
-    : 'https://develocity.apache.org';
+    : 'https://ge.solutions-team.gradle.com';
 
 module.exports = {
   server: {
