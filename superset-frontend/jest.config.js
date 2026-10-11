@@ -16,10 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { createRequire } from 'node:module';
+
 // timezone for unit tests
 process.env.TZ = 'America/New_York';
 
-const reporters = ['default'];
+const reporters = [
+  'default',
+  createRequire(import.meta.url).resolve(
+    '@gradle-tech/develocity-agent/jest-reporter',
+  ),
+];
 
 // HTML reporter is not used on CI so skipping its generation for saving time
 if (!process.env.CI) {

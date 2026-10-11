@@ -27,6 +27,9 @@ module.exports = {
   server: {
     url: develocityUrl,
   },
+  packageJson: {
+    searchBoundary: __dirname,
+  },
   buildScan: buildScanUserData(),
 };
 
