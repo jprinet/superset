@@ -17,6 +17,7 @@
  * under the License.
  */
 const { execSync } = require('node:child_process');
+const path = require('node:path');
 
 const develocityUrl =
   process.env.DEVELOCITY_URL !== undefined
@@ -106,7 +107,7 @@ module.exports = {
     url: develocityUrl,
   },
   packageJson: {
-    searchBoundary: __dirname,
+    searchBoundary: path.resolve(__dirname, '..'),
   },
   buildScan: buildScanUserData(),
 };
