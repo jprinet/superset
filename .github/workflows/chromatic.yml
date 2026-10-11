@@ -58,6 +58,10 @@ concurrency:
 env:
   TAG: apache/superset:chromatic-${{ github.run_id }}
   CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+  DEVELOCITY_DOCKER_ENV: >-
+    -e NODE_OPTIONS=--require=@gradle-tech/develocity-agent/preload
+    -e DEVELOCITY_ACCESS_KEY -e GITHUB_ACTIONS -e GITHUB_WORKFLOW -e GITHUB_JOB
+    -e GITHUB_RUN_ID -e GITHUB_RUN_ATTEMPT -e GITHUB_RUN_NUMBER -e GITHUB_HEAD_REF -e GITHUB_SHA
 
 permissions:
   contents: read
@@ -72,6 +76,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -94,11 +100,17 @@ jobs:
           fetch-depth: 500
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
+      - name: Start Develocity Docker agent
+        if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
+        continue-on-error: true
+        uses: $/.github/actions/develocity-docker-agent-start
+
       - name: Build Docker Image
         if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
         run: |
           docker buildx build \
             -t $TAG \
+            --build-arg DEVELOCITY_VALUE_CI_commit_sha="$GITHUB_SHA" \
             --cache-from=type=registry,ref=apache/superset-cache:3.11-slim-trixie \
             --target superset-node-ci \
             .
@@ -114,9 +126,15 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/superset-frontend/storybook-static
           docker run \
+          $DEVELOCITY_DOCKER_ENV \
           -v ${{ github.workspace }}/superset-frontend/storybook-static:/app/superset-frontend/storybook-static \
           --rm $TAG \
           bash -c "npm i && npm run build-storybook -- --webpack-stats-json"
+
+      - name: Stop Develocity Docker agent
+        if: ${{ always() && env.CHROMATIC_PROJECT_TOKEN != '' }}
+        continue-on-error: true
+        uses: $/.github/actions/develocity-docker-agent-stop
 
       - name: Publish to Chromatic
         if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
