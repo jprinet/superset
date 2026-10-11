@@ -30,6 +30,8 @@ jobs:
     if: needs.config.outputs.has-secrets
     runs-on: ubuntu-slim
     name: Generate Reports
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -47,6 +49,7 @@ jobs:
 
       - name: Run Script
         env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
           SPREADSHEET_ID: "1oABNnzxJYzwUrHjr_c9wfYEq9dFL1ScVof9LlaAdxvo"
           SERVICE_ACCOUNT_KEY: ${{ secrets.GSHEET_KEY }}
         run: npm run lint-stats

@@ -23,6 +23,8 @@ jobs:
   app-checks:
     runs-on: ubuntu-slim
     timeout-minutes: 20
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: "Checkout ${{ github.ref }} ( ${{ github.sha }} )"
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -38,15 +40,25 @@ jobs:
       - name: lint
         working-directory: ./superset-websocket
         run: npm run lint-check
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: typescript check
         working-directory: ./superset-websocket
         run: npm run type
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: code format check
         working-directory: ./superset-websocket
         run: npm run format-check
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: unit tests
         working-directory: ./superset-websocket
         run: npm run test
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: build
         working-directory: ./superset-websocket
         run: npm run build
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload

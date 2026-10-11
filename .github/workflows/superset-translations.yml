@@ -23,6 +23,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: "Checkout ${{ github.ref }} ( ${{ github.sha }} )"
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -60,6 +62,8 @@ jobs:
         run: |
           npm run build-translation
 
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
   # This job id is a required status check in .asf.yaml; renaming it breaks
   # branch protection for every PR until .asf.yaml is updated to match.
   babel-extract:

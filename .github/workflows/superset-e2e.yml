@@ -156,6 +156,8 @@ jobs:
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         with:
           run: build-instrumented-assets
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: Build embedded SDK
         # cached-dependencies is a submodule (not a plain directory), and
         # the $/ self-repository syntax resolves action files directly from
@@ -176,6 +178,8 @@ jobs:
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         with:
           run: playwright-install
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: Run Playwright (Required Tests)
         # cached-dependencies is a submodule (not a plain directory), and
         # the $/ self-repository syntax resolves action files directly from
@@ -185,7 +189,7 @@ jobs:
         # workflow in the repo that references this action.
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_OPTIONS: "--max-old-space-size=4096 --require=@gradle-tech/develocity-agent/preload"
         with:
           run: playwright-run "${{ matrix.app_root }}"
       - name: Run Playwright (Soft-delete Tests)
@@ -197,7 +201,7 @@ jobs:
         # workflow in the repo that references this action.
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_OPTIONS: "--max-old-space-size=4096 --require=@gradle-tech/develocity-agent/preload"
           # Scoped to this step: each playwright-run boots its own gunicorn
           # with the step's env, so the Required Tests server above keeps
           # master's Flask configuration while this one runs with SOFT_DELETE
@@ -218,7 +222,7 @@ jobs:
         # workflow in the repo that references this action.
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_OPTIONS: "--max-old-space-size=4096 --require=@gradle-tech/develocity-agent/preload"
           # Scoped to this step for the same reason as Soft-delete above:
           # embedding is a real, required feature, so its Playwright coverage
           # now gates merges instead of running only in shadow mode.
@@ -235,7 +239,7 @@ jobs:
         # workflow in the repo that references this action.
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_OPTIONS: "--max-old-space-size=4096 --require=@gradle-tech/develocity-agent/preload"
           # Scoped to this step for the same reason as Soft-delete and
           # Embedded above: the mobile consumption mode flag must not alter
           # Flask's configuration for the other steps' servers.
@@ -375,6 +379,8 @@ jobs:
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         with:
           run: build-instrumented-assets
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: Install Playwright
         # cached-dependencies is a submodule (not a plain directory), and
         # the $/ self-repository syntax resolves action files directly from
@@ -385,6 +391,8 @@ jobs:
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         with:
           run: playwright-install
+        env:
+          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: Run Playwright (Global Async Queries Tests)
         # cached-dependencies is a submodule (not a plain directory), and
         # the $/ self-repository syntax resolves action files directly from
@@ -394,7 +402,7 @@ jobs:
         # workflow in the repo that references this action.
         uses: ./.github/actions/cached-dependencies # zizmor: ignore[self-repository] - $/ cannot resolve an action that lives in a submodule; ./ is required here
         env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_OPTIONS: "--max-old-space-size=4096 --require=@gradle-tech/develocity-agent/preload"
           # Scoped to this step for the same reason as the Soft-delete, Embedded
           # and Mobile steps in playwright-tests above: GLOBAL_ASYNC_QUERIES
           # changes chart-data behaviour for every spec sharing a server.
