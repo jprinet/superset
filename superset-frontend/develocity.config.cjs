@@ -23,15 +23,15 @@ const develocityUrl =
     ? process.env.DEVELOCITY_URL
     : 'https://ge.solutions-team.gradle.com';
 
-module.exports = {
-  server: {
-    url: develocityUrl,
-  },
-  packageJson: {
-    searchBoundary: __dirname,
-  },
-  buildScan: buildScanUserData(),
-};
+function outputOf(command) {
+  try {
+    return execSync(command, { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
+  } catch {
+    return undefined;
+  }
+}
 
 function buildScanUserData() {
   const links = {};
@@ -98,12 +98,12 @@ function buildScanUserData() {
   };
 }
 
-function outputOf(command) {
-  try {
-    return execSync(command, { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] })
-      .toString()
-      .trim();
-  } catch {
-    return undefined;
-  }
-}
+module.exports = {
+  server: {
+    url: develocityUrl,
+  },
+  packageJson: {
+    searchBoundary: __dirname,
+  },
+  buildScan: buildScanUserData(),
+};
