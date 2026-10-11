@@ -35,6 +35,8 @@ jobs:
       pull-requests: read
     outputs:
       should-run: ${{ steps.check.outputs.frontend }}
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -48,6 +50,11 @@ jobs:
         uses: $/.github/actions/change-detector/
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Start Develocity Docker agent
+        if: steps.check.outputs.frontend
+        continue-on-error: true
+        uses: $/.github/actions/develocity-docker-agent-start
 
       - name: Build Docker Image
         if: steps.check.outputs.frontend
@@ -76,6 +83,11 @@ jobs:
         with:
           name: docker-image
           path: docker-image.tar.zst
+
+      - name: Stop Develocity Docker agent
+        if: always() && steps.check.outputs.frontend
+        continue-on-error: true
+        uses: $/.github/actions/develocity-docker-agent-stop
 
   sharded-jest-tests:
     needs: frontend-build

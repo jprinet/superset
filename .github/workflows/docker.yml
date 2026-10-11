@@ -309,6 +309,7 @@ jobs:
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       IMAGE_TAG: apache/superset:GHA-${{ matrix.build_preset }}-${{ github.run_id }}
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
 
     steps:
       - name: "Checkout ${{ github.ref }} ( ${{ github.sha }} )"
@@ -340,6 +341,10 @@ jobs:
           dockerhub-user: ${{ secrets.DOCKERHUB_USER }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           build: "true"
+
+      - name: Start Develocity Docker agent
+        continue-on-error: true
+        uses: $/.github/actions/develocity-docker-agent-start
 
       - name: Setup supersetbot
         uses: $/.github/actions/setup-supersetbot/
@@ -529,6 +534,11 @@ jobs:
           # This should reuse the CACHED image built in the previous steps
           docker compose build superset-init --build-arg DEV_MODE=false --build-arg INCLUDE_CHROMIUM=false
           docker compose up superset-init --exit-code-from superset-init
+
+      - name: Stop Develocity Docker agent
+        if: always()
+        continue-on-error: true
+        uses: $/.github/actions/develocity-docker-agent-stop
 
   docker-compose-image-tag:
     # Run this job only on pushes to master (not for PRs)
