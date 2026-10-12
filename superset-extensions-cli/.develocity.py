@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 # The Develocity Python agent reads the configuration next to the nearest pyproject.toml.
-# Keep in sync with ../.develocity.py.
+# Keep it in sync with ../.develocity.py.
 import os
 from typing import Any
 
