@@ -54,6 +54,7 @@ jobs:
         # so cross-version breaks don't cost a runner on every push/PR.
         python-version: ["current"]
     env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
       PYTHONPATH: ${{ github.workspace }}
     steps:
       - name: "Checkout ${{ github.ref }} ( ${{ github.sha }} )"

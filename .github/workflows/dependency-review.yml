@@ -49,6 +49,8 @@ jobs:
     # NOTE: Configuration for liccheck lives in our pyproject.yml.
     # You cannot use a liccheck.ini file in this workflow.
     runs-on: ubuntu-slim
+    env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
     steps:
       - uses: Kesin11/actions-timeline@57fc93f20c6da7fbc14063c6d24a2a5627c799ad # v3.2.0
         with:

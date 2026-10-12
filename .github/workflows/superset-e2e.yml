@@ -22,6 +22,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
+env:
+  DEVELOCITY_TAG_CI: "true"
+  DEVELOCITY_VALUE_CI_commit_sha: ${{ github.sha }}
+  DEVELOCITY_VALUE_CI_run: ${{ github.run_id }}
+
 permissions:
   contents: read
 
@@ -64,6 +69,7 @@ jobs:
         # dimension, so it runs on every event.
         app_root: ["", "/app/prefix"]
     env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
       SUPERSET_ENV: development
       SUPERSET_CONFIG: tests.integration_tests.superset_test_config
       SUPERSET__SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://superset:superset@127.0.0.1:15432/superset
@@ -135,6 +141,9 @@ jobs:
           node-version-file: "./superset-frontend/.nvmrc"
           cache: "npm"
           cache-dependency-path: "superset-frontend/package-lock.json"
+      - name: Setup Develocity for npm
+        if: env.DEVELOCITY_ACCESS_KEY != ''
+        uses: $/.github/actions/setup-develocity-npm
       - name: Install npm dependencies
         # cached-dependencies is a submodule (not a plain directory), and
         # the $/ self-repository syntax resolves action files directly from
@@ -282,6 +291,7 @@ jobs:
         browser: ["chromium"]
         app_root: ["", "/app/prefix"]
     env:
+      DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
       SUPERSET_ENV: development
       SUPERSET_CONFIG: tests.integration_tests.superset_test_config_gaq
       SUPERSET__SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://superset:superset@127.0.0.1:15432/superset
@@ -353,6 +363,9 @@ jobs:
           node-version-file: "./superset-frontend/.nvmrc"
           cache: "npm"
           cache-dependency-path: "superset-frontend/package-lock.json"
+      - name: Setup Develocity for npm
+        if: env.DEVELOCITY_ACCESS_KEY != ''
+        uses: $/.github/actions/setup-develocity-npm
       - name: Install npm dependencies
         # cached-dependencies is a submodule (not a plain directory), and
         # the $/ self-repository syntax resolves action files directly from
