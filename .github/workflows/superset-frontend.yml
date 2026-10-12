@@ -119,13 +119,7 @@ jobs:
         id: develocity-npm
         if: env.DEVELOCITY_ACCESS_KEY != ''
         continue-on-error: true
-        uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
-        with:
-          develocity-url: https://develocity.apache.org
-          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
-          develocity-injection-enabled: true
-          develocity-npm-agent-version: 4.1.1
-          develocity-npm-agent-install-location: /tmp/develocity-npm
+        uses: $/.github/actions/setup-develocity-npm
 
       - name: npm run test with coverage
         env:
@@ -197,13 +191,7 @@ jobs:
         id: develocity-npm
         if: env.DEVELOCITY_ACCESS_KEY != ''
         continue-on-error: true
-        uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
-        with:
-          develocity-url: https://develocity.apache.org
-          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
-          develocity-injection-enabled: true
-          develocity-npm-agent-version: 4.1.1
-          develocity-npm-agent-install-location: /tmp/develocity-npm
+        uses: $/.github/actions/setup-develocity-npm
 
       - name: lint
         env:
@@ -240,13 +228,7 @@ jobs:
         id: develocity-npm
         if: env.DEVELOCITY_ACCESS_KEY != ''
         continue-on-error: true
-        uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
-        with:
-          develocity-url: https://develocity.apache.org
-          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
-          develocity-injection-enabled: true
-          develocity-npm-agent-version: 4.1.1
-          develocity-npm-agent-install-location: /tmp/develocity-npm
+        uses: $/.github/actions/setup-develocity-npm
 
       - name: Validate dependency tree
         env:
@@ -276,13 +258,7 @@ jobs:
         id: develocity-npm
         if: env.DEVELOCITY_ACCESS_KEY != ''
         continue-on-error: true
-        uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
-        with:
-          develocity-url: https://develocity.apache.org
-          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
-          develocity-injection-enabled: true
-          develocity-npm-agent-version: 4.1.1
-          develocity-npm-agent-install-location: /tmp/develocity-npm
+        uses: $/.github/actions/setup-develocity-npm
 
       - name: Build Storybook and Run Tests
         env:
@@ -338,13 +314,7 @@ jobs:
         id: develocity-npm
         if: env.DEVELOCITY_ACCESS_KEY != ''
         continue-on-error: true
-        uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
-        with:
-          develocity-url: https://develocity.apache.org
-          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
-          develocity-injection-enabled: true
-          develocity-npm-agent-version: 4.1.1
-          develocity-npm-agent-install-location: /tmp/develocity-npm
+        uses: $/.github/actions/setup-develocity-npm
 
       # webpack's persistent filesystem cache (superset-frontend/webpack.config.js)
       # turns a warm production build into ~20s instead of several minutes,
