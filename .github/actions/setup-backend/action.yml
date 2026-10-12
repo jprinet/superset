@@ -79,9 +79,8 @@ runs:
         fi
       shell: bash
     - name: Setup Develocity for Python
-      if: inputs.install-superset == 'true'
+      if: inputs.install-superset == 'true' && env.DEVELOCITY_ACCESS_KEY != ''
       uses: gradle/develocity-actions/setup-python@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
       with:
         develocity-url: https://develocity.apache.org
         develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
-        develocity-injection-enabled: ${{ env.DEVELOCITY_ACCESS_KEY != '' }}

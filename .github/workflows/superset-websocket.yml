@@ -40,11 +40,12 @@ jobs:
         with:
           node-version-file: './superset-websocket/.nvmrc'
       - name: Setup Develocity for npm
+        if: env.DEVELOCITY_ACCESS_KEY != ''
         uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
         with:
           develocity-url: https://develocity.apache.org
           develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
-          develocity-injection-enabled: ${{ env.DEVELOCITY_ACCESS_KEY != '' }}
+          develocity-injection-enabled: true
           develocity-npm-agent-version: 4.1.1
       - name: Install dependencies
         working-directory: ./superset-websocket
