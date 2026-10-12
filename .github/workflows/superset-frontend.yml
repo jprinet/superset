@@ -51,10 +51,14 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Start Develocity Docker agent
-        if: steps.check.outputs.frontend
+      - name: Setup Develocity for Docker
+        if: steps.check.outputs.frontend && env.DEVELOCITY_ACCESS_KEY != ''
         continue-on-error: true
-        uses: $/.github/actions/develocity-docker-agent-start
+        uses: gradle/develocity-actions/setup-docker@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        with:
+          develocity-url: https://ge.solutions-team.gradle.com
+          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
+          develocity-package-scan-enabled: false
 
       - name: Build Docker Image
         if: steps.check.outputs.frontend
@@ -84,11 +88,6 @@ jobs:
         with:
           name: docker-image
           path: docker-image.tar.zst
-
-      - name: Stop Develocity Docker agent
-        if: always() && steps.check.outputs.frontend
-        continue-on-error: true
-        uses: $/.github/actions/develocity-docker-agent-stop
 
   sharded-jest-tests:
     needs: frontend-build

@@ -342,9 +342,14 @@ jobs:
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           build: "true"
 
-      - name: Start Develocity Docker agent
+      - name: Setup Develocity for Docker
+        if: env.DEVELOCITY_ACCESS_KEY != ''
         continue-on-error: true
-        uses: $/.github/actions/develocity-docker-agent-start
+        uses: gradle/develocity-actions/setup-docker@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        with:
+          develocity-url: https://ge.solutions-team.gradle.com
+          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
+          develocity-package-scan-enabled: false
 
       - name: Setup supersetbot
         uses: $/.github/actions/setup-supersetbot/
@@ -535,11 +540,6 @@ jobs:
           # This should reuse the CACHED image built in the previous steps
           docker compose build superset-init --build-arg DEV_MODE=false --build-arg INCLUDE_CHROMIUM=false
           docker compose up superset-init --exit-code-from superset-init
-
-      - name: Stop Develocity Docker agent
-        if: always()
-        continue-on-error: true
-        uses: $/.github/actions/develocity-docker-agent-stop
 
   docker-compose-image-tag:
     # Run this job only on pushes to master (not for PRs)
