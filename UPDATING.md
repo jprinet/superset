@@ -60,6 +60,8 @@ assists people when migrating to a new version.
   the response size guard does not raise these fixed limits. Oversized results,
   including saved Table exports, return `InvalidQueryResult`; lower row limits,
   filter, select fewer/narrower columns, or aggregate before exporting.
+  Bullet preview numeric format precision is limited to 20 digits; raw data
+  reads do not validate presentation formats.
 
 - MCP `update_chart` requires a complete `config` when changing `dataset_id`
   to a different dataset, for both preview and immediate-save requests. Re-sending
@@ -266,6 +268,20 @@ format. Use a consistent timezone and precision for stored strings and bounds.
   `GET /register/activation/<hash>`, which previously stayed reachable and
   able to provision a user regardless of `AUTH_USER_REGISTRATION`; it now
   requires the same gate as `/register/`.
+
+### MCP chart tools advertise a compact chart config schema
+
+`generate_chart`, `update_chart`, `update_chart_preview` and
+`generate_explore_link` no longer inline every chart type's JSON Schema in
+their tool input schemas. Their `config` parameter is advertised as an object
+whose `chart_type` is one of the supported chart types. The fields and
+examples for each chart type come from `get_chart_type_schema(chart_type)`,
+which returns the same per-type schema as before.
+
+Server-side validation is unchanged: requests are still validated against the
+complete chart configuration model and invalid fields are rejected with the
+same errors. MCP clients that built chart configs only from the tool input
+schema should call `get_chart_type_schema` first.
 
 ### SQL execution request limits are safety caps
 
