@@ -16,11 +16,24 @@
 # under the License.
 # The Develocity Python agent reads the configuration next to the nearest pyproject.toml.
 # Keep in sync with ../.develocity.py.
+from __future__ import annotations
+
 import os
-from typing import Any
+from typing import Protocol
 
 
-def develocity_configuration(configuration: Any) -> Any:
+class DevelocityConfiguration(Protocol):
+    """The attributes of the agent's configuration object set below."""
+
+    develocity_url: str | None
+    project_name: str | None
+    tags: set[str]
+    custom_values: dict[str, str]
+
+
+def develocity_configuration(
+    configuration: DevelocityConfiguration,
+) -> DevelocityConfiguration:
     configuration.develocity_url = "https://ge.solutions-team.gradle.com"
     configuration.project_name = "superset"
     if "GITHUB_ACTIONS" in os.environ:

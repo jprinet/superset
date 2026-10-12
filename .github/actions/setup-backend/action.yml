@@ -78,14 +78,10 @@ runs:
           uv pip install --system -e .
         fi
       shell: bash
-    - name: Install Develocity Python agent
+    - name: Setup Develocity for Python
       if: inputs.install-superset == 'true'
-      shell: bash
-      run: |
-        if [ -z "${DEVELOCITY_ACCESS_KEY:-}" ]; then
-          echo "DEVELOCITY_ACCESS_KEY is not set; skipping the Develocity Python agent"
-          exit 0
-        fi
-        uv pip install --system \
-          "develocity-agent @ https://develocity-python-pkgs.gradle.com/develocity_agent-0.10.1-py3-none-any.whl#sha256=2bfc48f29b1c437daac718bb3d5c726b74ec60cf33723986341d9a262e6f4896" \
-          || echo "::warning::Could not install the Develocity Python agent; Build Scans will not be published"
+      uses: gradle/develocity-actions/setup-python@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+      with:
+        develocity-url: https://ge.solutions-team.gradle.com
+        develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
+        develocity-injection-enabled: ${{ env.DEVELOCITY_ACCESS_KEY != '' }}
