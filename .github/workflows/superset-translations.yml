@@ -8,6 +8,11 @@ on:
   pull_request:
     types: [synchronize, opened, reopened, ready_for_review]
 
+env:
+  DEVELOCITY_TAG_CI: "true"
+  DEVELOCITY_VALUE_CI_commit_sha: ${{ github.sha }}
+  DEVELOCITY_VALUE_CI_run: ${{ github.run_id }}
+
 permissions:
   contents: read
   pull-requests: read
@@ -45,6 +50,13 @@ jobs:
           node-version-file: "./superset-frontend/.nvmrc"
           cache: "npm"
           cache-dependency-path: "superset-frontend/package-lock.json"
+      - name: Setup Develocity for npm
+        uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        with:
+          develocity-url: https://ge.solutions-team.gradle.com
+          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
+          develocity-injection-enabled: ${{ env.DEVELOCITY_ACCESS_KEY != '' }}
+          develocity-npm-agent-version: 4.1.1
       - name: Install dependencies
         if: steps.check.outputs.frontend
         # cached-dependencies is a git submodule (not a plain directory), and
@@ -62,8 +74,6 @@ jobs:
         run: |
           npm run build-translation
 
-        env:
-          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
   # This job id is a required status check in .asf.yaml; renaming it breaks
   # branch protection for every PR until .asf.yaml is updated to match.
   babel-extract:

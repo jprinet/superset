@@ -11,6 +11,11 @@ on:
       - "superset-websocket/**"
     types: [synchronize, opened, reopened, ready_for_review]
 
+env:
+  DEVELOCITY_TAG_CI: "true"
+  DEVELOCITY_VALUE_CI_commit_sha: ${{ github.sha }}
+  DEVELOCITY_VALUE_CI_run: ${{ github.run_id }}
+
 permissions:
   contents: read
 
@@ -34,31 +39,28 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: './superset-websocket/.nvmrc'
+      - name: Setup Develocity for npm
+        uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        with:
+          develocity-url: https://ge.solutions-team.gradle.com
+          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
+          develocity-injection-enabled: ${{ env.DEVELOCITY_ACCESS_KEY != '' }}
+          develocity-npm-agent-version: 4.1.1
       - name: Install dependencies
         working-directory: ./superset-websocket
         run: npm ci
       - name: lint
         working-directory: ./superset-websocket
         run: npm run lint-check
-        env:
-          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: typescript check
         working-directory: ./superset-websocket
         run: npm run type
-        env:
-          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: code format check
         working-directory: ./superset-websocket
         run: npm run format-check
-        env:
-          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: unit tests
         working-directory: ./superset-websocket
         run: npm run test
-        env:
-          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload
       - name: build
         working-directory: ./superset-websocket
         run: npm run build
-        env:
-          NODE_OPTIONS: --require=@gradle-tech/develocity-agent/preload

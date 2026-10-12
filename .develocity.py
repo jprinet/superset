@@ -37,7 +37,7 @@ def develocity_configuration(
     if "GITHUB_ACTIONS" in os.environ:
         configuration.tags.add("CI")
         configuration.custom_values["CI_commit_sha"] = os.environ.get("GITHUB_SHA", "")
-        configuration.custom_values["CI run"] = os.environ.get("GITHUB_RUN_ID", "")
+        configuration.custom_values["CI_run"] = os.environ.get("GITHUB_RUN_ID", "")
     else:
         configuration.tags.add("Local")
     return configuration

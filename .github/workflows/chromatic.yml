@@ -58,10 +58,15 @@ concurrency:
 env:
   TAG: apache/superset:chromatic-${{ github.run_id }}
   CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-  DEVELOCITY_DOCKER_ENV: >-
-    -e NODE_OPTIONS=--require=@gradle-tech/develocity-agent/preload
-    -e DEVELOCITY_ACCESS_KEY -e GITHUB_ACTIONS -e GITHUB_WORKFLOW -e GITHUB_JOB
-    -e GITHUB_RUN_ID -e GITHUB_RUN_ATTEMPT -e GITHUB_RUN_NUMBER -e GITHUB_HEAD_REF -e GITHUB_SHA
+  DEVELOCITY_TAG_CI: "true"
+  DEVELOCITY_VALUE_CI_commit_sha: ${{ github.sha }}
+  DEVELOCITY_VALUE_CI_run: ${{ github.run_id }}
+  DEVELOCITY_DOCKER_ARGS: >-
+    -v /tmp/develocity-npm:/opt/develocity-npm:ro
+    -e NODE_PATH=/opt/develocity-npm -e NODE_OPTIONS=--require=@gradle-tech/develocity-agent/preload
+    -e DEVELOCITY_URL -e DEVELOCITY_ACCESS_KEY -e DEVELOCITY_VALUE_CIAutoInjection
+    -e DEVELOCITY_INTERNAL_ENABLE_JEST_REPORTER_INJECTION=true -e DEVELOCITY_PACKAGE_JSON_SEARCH_BOUNDARY=/app
+    -e DEVELOCITY_TAG_CI -e DEVELOCITY_VALUE_CI_commit_sha -e DEVELOCITY_VALUE_CI_run
 
 permissions:
   contents: read
@@ -119,6 +124,18 @@ jobs:
             --target superset-node-ci \
             .
 
+      - name: Setup Develocity for npm
+        id: develocity-npm
+        if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' && env.DEVELOCITY_ACCESS_KEY != '' }}
+        continue-on-error: true
+        uses: gradle/develocity-actions/setup-npm@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        with:
+          develocity-url: https://ge.solutions-team.gradle.com
+          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
+          develocity-injection-enabled: true
+          develocity-npm-agent-version: 4.1.1
+          develocity-npm-agent-install-location: /tmp/develocity-npm
+
       # --webpack-stats-json writes preview-stats.json into storybook-static.
       # TurboSnap (onlyChanged below) needs it to trace which stories a
       # changed file affects; without it, chromaui/action fails with "Could
@@ -127,6 +144,8 @@ jobs:
       # collection into.
       - name: Build Storybook
         if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
+        env:
+          DEVELOCITY_DOCKER_ENV: ${{ steps.develocity-npm.outcome == 'success' && env.DEVELOCITY_DOCKER_ARGS || '' }}
         run: |
           mkdir -p ${{ github.workspace }}/superset-frontend/storybook-static
           docker run \
