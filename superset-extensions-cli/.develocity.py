@@ -34,7 +34,7 @@ class DevelocityConfiguration(Protocol):
 def develocity_configuration(
     configuration: DevelocityConfiguration,
 ) -> DevelocityConfiguration:
-    configuration.develocity_url = "https://ge.solutions-team.gradle.com"
+    configuration.develocity_url = "https://develocity.apache.org"
     configuration.project_name = "superset"
     if "GITHUB_ACTIONS" in os.environ:
         configuration.tags.add("CI")
