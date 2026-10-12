@@ -10,7 +10,7 @@ inputs:
     required: false
     default: 'dev'
   develocity-access-key:
-    description: 'Access key for develocity.apache.org. When set, the Develocity Python agent is installed and pytest publishes Build Scans'
+    description: 'Access key for ge.solutions-team.gradle.com. When set, the Develocity Python agent is installed and pytest publishes Build Scans'
     required: false
     default: ''
   install-superset:
@@ -86,5 +86,5 @@ runs:
       if: inputs.install-superset == 'true' && inputs.develocity-access-key != ''
       uses: gradle/develocity-actions/setup-python@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
       with:
-        develocity-url: https://develocity.apache.org
+        develocity-url: https://ge.solutions-team.gradle.com
         develocity-access-key: ${{ inputs.develocity-access-key }}
